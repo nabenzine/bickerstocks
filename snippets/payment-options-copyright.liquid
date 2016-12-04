@@ -1,0 +1,14 @@
+<div class="payment-options">
+
+  {% for i in (1..5) %}
+    {% capture pay_image %}pay_image_{{ i }}.jpg{% endcapture %}
+    {% capture show_pay_image %}show_pay_image_{{ i }}{% endcapture %}
+
+    {% if settings[show_pay_image] %}
+    
+        <img src="{{ pay_image | asset_url }}" />
+    
+    {% endif %}
+
+  {% endfor %}
+</div>

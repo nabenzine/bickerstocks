@@ -1,0 +1,45 @@
+{% if shop.locale == "fr" %}
+
+<div class="order-process">
+  <div class="mainCntr">
+    <h5>Le processus de commande {{shop.name}}</h5>
+    <div class="op-col">
+     <img src="{{ 'cart.png' | asset_url }}" />
+      <h4>Commandez</h4>
+      <p>Commandez vos articles préférés <br /> sur notre boutique.</p>
+    </div>
+    <div class="op-col">
+     <img src="{{ 'share.png' | asset_url }}" />
+      <h4>Partagez</h4>
+      <p>Partagez nos produits avec <br /> vos amis.</p>
+    </div>
+    <div class="op-col">
+     <img src="{{ 'receive.png' | asset_url }}" />
+      <h4>Recevez</h4>
+      <p>Recevez votre commande <br />chez vous, à votre porte.</p>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="order-process">
+  <div class="mainCntr">
+    <h5>The Ordering Process on {{shop.name}}</h5>
+    <div class="op-col">
+     <img src="{{ 'cart.png' | asset_url }}" />
+      <h4>Order</h4>
+      <p>Order your favorite designs<br />from our online store.</p>
+    </div>
+    <div class="op-col">
+     <img src="{{ 'share.png' | asset_url }}" />
+      <h4>Share</h4>
+      <p>Share our products with<br />your friends and family.</p>
+    </div>
+    <div class="op-col">
+     <img src="{{ 'receive.png' | asset_url }}" />
+      <h4>Receive</h4>
+      <p>We’ll make and ship your order<br />and deliver it to your door.</p>
+    </div>
+  </div>
+</div>
+{% endif %}

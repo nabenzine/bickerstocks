@@ -1,0 +1,406 @@
+<main class="main-content" role="main">
+  
+  <!-- sections added before product main section -->
+  {% if settings.product_section_1 != blank %}
+  <section id="product_section_1"  class="{{ settings.product_section_1_class | default:"no_wrapper" }}">
+      <div class="grid">
+          <div class="grid__item">
+              {% include settings.product_section_1 %}
+          </div>
+      </div>
+  </section>
+  {% endif %}  
+  
+  <!-- MAIN product section -->
+  <div class="grid">
+    <div class="grid__item">
+
+      <div itemscope itemtype="http://schema.org/Product" class="wrapper">
+
+        <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+        <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+        <div class="section-header section-header--breadcrumb">
+          {% include 'breadcrumb' %}
+        </div>
+
+        <div class="product-single">
+          <div class="grid product-single__hero">
+            <div class="grid__item post-large--one-half">
+
+              {% if settings.product_thumbnails_position == 'below' or product.images.size < 2 %}        
+
+                <div class="product-single__photos" id="ProductPhoto">
+                  {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+                  <img src="{{ featured_image | img_url: '1024x1024' }}" alt="{{ featured_image.alt | escape }}" id="ProductPhotoImg"{% if settings.product_image_zoom_type == 'zoom-in' %} data-zoom="{{ featured_image | img_url: '1024x1024' }}"{% endif %} data-image-id="{{ featured_image.id }}">
+                </div>
+
+                {% if product.images.size > 1 %}
+
+                  <ul class="product-single__thumbnails grid-uniform" id="ProductThumbs">
+                    {% for image in product.images %}
+                      <li class="grid__item wide--one-quarter large--one-third medium-down--one-third">
+                        <a data-image-id="{{ image.id }}" href="{{ image.src | img_url: '1024x1024' }}" class="product-single__thumbnail">
+                          <img src="{{ image.src | img_url: 'grande' }}" alt="{{ image.alt | escape }}">
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+
+                {% endif %}
+
+              {% else %}
+
+                <div class="grid">
+
+                  <div class="grid__item four-fifths product-single__photos" id="ProductPhoto">
+                    {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+                    <img src="{{ featured_image | img_url: '1024x1024' }}" alt="{{ featured_image.alt | escape }}" id="ProductPhotoImg"{% if settings.product_image_zoom_type == 'zoom-in' %} data-zoom="{{ featured_image | img_url: '1024x1024' }}"{% endif %} data-image-id="{{ featured_image.id }}">
+                  </div>
+
+                  <div class="grid__item one-fifth">
+
+                    <ul class="grid product-single__thumbnails" id="ProductThumbs">
+                      {% for image in product.images %}
+                        <li class="grid__item_li">
+                          <a data-image-id="{{ image.id }}" href="{{ image.src | img_url: '1024x1024' }}" class="product-single__thumbnail">
+                            <img src="{{ image.src | img_url: 'grande' }}" alt="{{ image.alt | escape }}">
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+
+                  </div>
+
+                </div>
+
+              {% endif %}
+
+              {% if settings.product_image_zoom_type == 'lightbox' %}
+              <ul class="gallery" class="hidden">
+                {% for image in product.images %}
+                <li data-image-id="{{ image.id }}" class="gallery__item" data-mfp-src="{{ image | img_url: '1024x1024' }}"></li>
+                {% endfor %}
+              </ul>
+              {% endif %} 
+
+
+              {% if settings.product_related_enable %}
+               <div class="mobile_hidden">
+               {% include 'related-products' %}
+              </div>
+              {% endif %}
+
+
+
+
+            </div>
+            <div class="grid__item post-large--one-half product-description-pnl">
+              {% comment %}{% if settings.product_vendor_enable %}
+                <h3>{{ product.vendor }}</h3>
+              {% endif %}{% endcomment %}
+              <h1 itemprop="name">{{ product.title }}</h1>
+
+              <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                {% assign variant = product.selected_or_first_available_variant %}
+
+                <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+                <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">          
+
+                <div class="product-single__prices">
+                  <span id="ProductPrice" class="product-single__price" itemprop="price">
+                    {{ product.price | money }}
+                  </span>
+
+                  {% if product.compare_at_price > product.price %}
+                    <s id="ComparePrice" class="product-single__sale-price">
+                      {{ product.compare_at_price_max | money }}
+                    </s>
+                  {% endif %}
+                </div>
+
+                <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm">
+                  <select name="id" id="productSelect" class="product-single__variants">
+                    {% for variant in product.variants %}
+                      {% if variant.available %}
+
+                        <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+                      {% else %}
+                        <option disabled="disabled">
+                          {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                        </option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+
+                  <div class="product-single__quantity{% unless settings.product_quantity_enable %} is-hidden{% endunless %}">
+                    <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
+                    <input type="number" id="Quantity" name="quantity" value="1" min="1" class="quantity-selector">
+                  </div>
+
+                  <button type="submit" name="add" id="AddToCart" class="btn">
+                    <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+                  </button>
+                </form>
+               {% comment %}
+                <div class="product-description rte" itemprop="description">
+                  {{ product.description }}
+                </div>
+               {% endcomment %}
+
+                <div class="my-tab">
+      {% if shop.locale == "fr" %} 
+                  <ul class="tabs">
+                    <li><a href="#tab-1">{{ 'products.tabs.Details' |t }}</a></li>
+                  {% if settings.product_tab_2_fr != empty %}
+                    <li><a href="#tab-2">{{ pages[settings.product_tab_2_fr].title }}</a></li>
+                  {% endif %}            
+
+                  {% if settings.product_tab_3_fr != empty %}
+                    <li><a href="#tab-3">{{ pages[settings.product_tab_3_fr].title }}</a></li>
+                  {% endif %}            
+                  {% if settings.product_tab_4_fr != empty %}
+                    <li><a href="#tab-4">{{ pages[settings.product_tab_4_fr].title }}</a></li>
+                  {% endif %}            
+                  </ul>
+      {% else %}
+                  <ul class="tabs">
+                    <li><a href="#tab-1">{{ 'products.tabs.Details' |t }}</a></li>
+                  {% if settings.product_tab_2 != empty %}
+                    <li><a href="#tab-2">{{ pages[settings.product_tab_2].title }}</a></li>
+                  {% endif %}                        
+                  {% if settings.product_tab_3 != empty %}
+                    <li><a href="#tab-3">{{ pages[settings.product_tab_3].title }}</a></li>
+                  {% endif %}            
+                  {% if settings.product_tab_4 != empty %}
+                    <li><a href="#tab-4">{{ pages[settings.product_tab_4].title }}</a></li>
+                  {% endif %}            
+                  </ul>
+      {% endif %}            
+      {% if shop.locale == "fr" %} 
+                  <div id="tab-1">
+                  {{ product.description }}
+
+                  {% if settings.product_tab_1_fr != empty %}
+                    <h3>{{ pages[settings.product_tab_1_fr].title }}</h3>
+                     {{ pages[settings.product_tab_1_fr].content }}
+                  {% endif %}            
+
+                  </div>
+
+                  {% if settings.product_tab_2_fr != empty %}
+                  <div id="tab-2">
+                     {{ pages[settings.product_tab_2_fr].content }} 
+                  </div>
+                  {% endif %}            
+                  {% if settings.product_tab_3_fr != empty %}
+                  <div id="tab-3">
+                     {{ pages[settings.product_tab_3_fr].content }} 
+                  </div>
+                  {% endif %}            
+                  {% if settings.product_tab_4_fr != empty %}
+                  <div id="tab-4">
+                     {{ pages[settings.product_tab_4_fr].content }} 
+                  </div>
+                  {% endif %}            
+      {% else %}
+                  <div id="tab-1">
+                  {{ product.description }}
+
+                  {% if settings.product_tab_1 != empty %}
+                    <h3>{{ pages[settings.product_tab_1].title }}</h3>
+                     {{ pages[settings.product_tab_1].content }}
+                  {% endif %}            
+
+                  </div>
+                  {% if settings.product_tab_2 != empty %}
+                  <div id="tab-2">
+                     {{ pages[settings.product_tab_2].content }} 
+                  </div>
+                  {% endif %}            
+                  {% if settings.product_tab_3 != empty %}
+                  <div id="tab-3">
+                     {{ pages[settings.product_tab_3].content }} 
+                  </div>
+                  {% endif %}            
+                  {% if settings.product_tab_4 != empty %}
+                  <div id="tab-4">
+                     {{ pages[settings.product_tab_4].content }} 
+                  </div>
+                  {% endif %}            
+      {% endif %}            
+                </div>
+
+
+              {% if settings.product_bottom_info_fr != empty %}
+                <br/>
+              {{ pages[settings.product_bottom_info_fr].content }}
+              {% endif %} 
+
+                {% if settings.social_sharing_products %}
+                  <hr class="hr--clear hr--small">
+                  <br/>
+                  <h4>{{ 'products.general.share_title' | t }}</h4>
+                  {% include 'social-sharing' %}
+                {% endif %}
+                 {% comment %} FY         {% endcomment %}
+
+              </div>
+              {% include 'beetailer_social_widget' %}
+
+              {% if settings.product_related_enable %}
+               <div class="desktop_hidden">
+               {% include 'related-products' %}
+              </div>
+              {% endif %}
+                      
+              
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+      
+   
+<!-- sections added after product main section -->
+
+  {% if settings.product_section_3 != blank %}
+  <section id="product_section_3"  class="{{ settings.product_section_3_class | default:"no_wrapper" }}">
+      <div class="grid">
+          <div class="grid__item">
+              {% include settings.product_section_3 %}
+          </div>
+      </div>
+  </section>
+  {% endif %}
+
+  {% if settings.product_section_4 != blank %}
+  <section id="product_section_4"  class="{{ settings.product_section_4_class | default:"no_wrapper" }}">
+      <div class="grid">
+          <div class="grid__item">
+            {% include settings.product_section_4 %}
+          </div>
+      </div>
+  </section>
+  {% endif %}
+</main>
+ 
+ 
+<!-- SCRIPTS -->
+
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+<script>
+  var selectCallback = function(variant, selector) {
+    timber.productPage({
+      money_format: "{{ shop.money_format }}",
+      variant: variant,
+      selector: selector
+    });
+  };
+
+  jQuery(function($) {
+    new Shopify.OptionSelectors('productSelect', {
+      product: {{ product | json }},
+      onVariantSelected: selectCallback,
+      enableHistoryState: true
+    });
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.size == 1 and product.options.first != 'Title' %}
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+    {% endif %}
+
+    // Hide selectors if we only have 1 variant and its title contains 'Default'.
+    {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+    {% endif %}
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('ul.tabs').each(function(){
+      var active, content, links = $(this).find('a');
+      active = links.first().addClass('active');
+      content = $(active.attr('href'));
+      links.not(':first').each(function () {
+        $($(this).attr('href')).hide();
+      });
+      $(this).find('a').click(function(e){
+        active.removeClass('active');
+        content.hide();
+        active = $(this);
+        content = $($(this).attr('href'));
+        active.addClass('active');
+        content.show();
+        return false;
+      });
+    });
+  });
+</script>
+
+{% if settings.product_sync_variant_images %}
+{% comment %}
+Place this in your product.liquid template, at the bottom.
+
+MANAGE VARIANT IMAGES
+
+{% endcomment %}
+
+{% if product.variants.size > 1 %}
+<script>
+(function($) { 
+  var variantImages = {},
+    thumbnails,
+    variant,
+    variantImage,
+    optionValue;
+    {% for variant in product.variants %}
+       variant = {{ variant | json }};
+       if ( typeof variant.featured_image !== 'undefined' && variant.featured_image !== null ) {
+         variantImage =  variant.featured_image.src.split('?')[0].replace(/http(s)?:/,'');
+         variantImages[variantImage] = variantImages[variantImage] || {};
+         {% for option in product.options %}
+           {% assign option_value = variant.options[forloop.index0] %}
+           {% assign option_key = 'option-' | append: forloop.index0 %}
+           if (typeof variantImages[variantImage][{{ option_key | json }}] === 'undefined') {
+             variantImages[variantImage][{{ option_key | json }}] = {{ option_value | json }};
+           }
+           else {
+             var oldValue = variantImages[variantImage][{{ option_key | json }}];
+             if ( oldValue !== null && oldValue !== {{ option_value | json }} )  {
+               variantImages[variantImage][{{ option_key | json }}] = null;
+             }
+           }
+         {% endfor %}
+       }
+    {% endfor %}
+    $(function() {
+      thumbnails = $('img[src*="/products/"]').not(':first');
+      if (thumbnails.size()) {
+        thumbnails.bind('click', function() {
+          var image = $(this).attr('src').split('?')[0].replace(/(_thumb\.)|(_small\.)|(_compact\.)|(_medium\.)|(_large\.)|(_grande\.)/,'.');
+          if (typeof variantImages[image] !== 'undefined') {
+            {% for option in product.options %}
+            optionValue = variantImages[image]['option-{{ forloop.index0 }}'];
+            if (optionValue !== null && $('.single-option-selector:eq({{ forloop.index0 }}) option').filter(function() { return $(this).text() === optionValue }).length) {
+              $('.single-option-selector:eq({{ forloop.index0 }})').val(optionValue).trigger('change');
+            }
+            {% endfor %}
+          }
+        });
+      }
+    });
+})(jQuery);
+</script> 
+{% endif %}
+
+{% comment %}
+
+ / MANAGE VARIANT IMAGES
+
+{% endcomment %}
+{% endif %}

@@ -1,0 +1,27 @@
+<div class="flexslider">
+  <ul class="slides">
+    {% for i in (1..6) %}
+      {% capture slide %}slide_{{ i }}{% endcapture %}
+      {% capture slide_link %}slide_{{ i }}_link{% endcapture %}
+      {% capture slide_img %}slide_{{ i }}.jpg{% endcapture %}
+      {% capture slide_alt %}slide_{{ i }}_alt{% endcapture %}
+      {% capture slide_text1 %}slide_{{ i }}_text1{% endcapture %}
+      {% capture slide_text2 %}slide_{{ i }}_text2{% endcapture %}
+      {% capture slide_linkText %}slide_{{ i }}_linkText{% endcapture %}
+      {% if settings[slide] %}
+        <li>
+          {{ slide_img | asset_url | img_tag: settings[slide_alt] }}
+          {% if settings[slide_text1] != "" %}
+          <div class="banner-content">
+            <div class="content-inner">
+            	<h4>{{ settings[slide_text1] }}</h4>
+            	<p>{{ settings[slide_text2] }}</p>
+          		<a href="{{ settings[slide_link] }}" class="slide-link"> {{ settings[slide_linkText] }} </a>
+            </div>
+          </div>
+          {% endif %}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>

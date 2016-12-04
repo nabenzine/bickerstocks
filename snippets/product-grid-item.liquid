@@ -1,0 +1,102 @@
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'wide--one-quarter large--one-quarter medium-down--one-half' %}
+{% endunless %}
+
+{% unless current_collection == blank %}
+  {% assign current_collection = collection %}
+{% endunless %}
+
+
+{% assign config_sale_text = settings.collections_show_sale_text %}
+{% if config_sale_text == '' %}
+{% assign config_sale_text = 'products.product.sale' | t %}
+{% endif %}
+
+
+{% assign on_sale_bubble = false %}
+{% assign price_class = '' %}
+{% assign on_sale = false %}
+{% assign sale_text = config_sale_text %}
+{% if product.compare_at_price > product.price %}
+  	{% assign on_sale = true %}
+	{% assign price_class = 'on_sale' %}
+	{% assign on_sale_bubble = false %}
+
+	{% if settings.collections_show_sale_circle %}
+		{% if settings.collections_show_sale_circle_by_tag %}
+          {% assign product_tags_string = product.tags | join %}
+          {% if product_tags_string contains 'Promo' %}
+	  		  {% assign on_sale_bubble = true %}
+          {% endif %}
+		{% else %}
+        	{% assign on_sale_bubble = true %}
+		{% endif %}
+	{% else %}
+  		{% assign on_sale_bubble = false %}
+	{% endif %}
+{% endif %}
+
+
+
+{% assign freebie = false %}
+{% if product.price == 0 %}
+      {% assign price_class = 'freebie' %}
+      {% assign freebie = true %}
+      {% assign sale_text = 'products.product.freebie' | t %}
+
+	{% if settings.collections_show_freebie_circle %}
+  		{% assign on_sale_bubble = true %}
+	{% else %}
+  		{% assign on_sale_bubble = false %}
+	{% endif %}
+{% endif %}
+
+
+
+
+{% assign sold_out = true %}
+{% assign sold_out_text = 'products.product.sold_out' | t %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+<div class="grid__item {{grid_item_width}}{% if sold_out %} sold-out{% endif %}{% if on_sale %} on-sale{% endif %} {{ price_class }}">
+  <a href="{{ product.url | within: collection }}" class="grid-link{% if settings.collections_center_grid_link %} text-center{% endif %}">
+   
+    
+    
+    <span class="grid-link__image grid-link__image--product">
+      {% if on_sale_bubble %}
+        <span class="badge badge--sale">
+          <span class="badge__text{% if sale_text.size > 7 %} badge__text--small{% endif %}">{{ sale_text }}</span>
+        </span>
+      {% endif %}
+      {% if sold_out and settings.collections_show_sold_out_circle %}
+        <span class="badge badge--sold-out">
+          <span class="badge__text{% if sold_out_text.size > 9 %} badge__text--small{% endif %}">{{ 'products.product.sold_out' | t }}</span>
+        </span>
+      {% endif %}
+      <span class="grid-link__image-centered ">
+    
+        <img src="{{ product.featured_image.src | img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}">
+      </span>
+      <span class="new-blank {% if product.tags contains "New Item" %}newitem {% endif %}"><img src="{{ 'new-item.png' | asset_url}}" /></span>
+    </span>
+    <p class="grid-link__title">{{ product.title }}</p>
+    {% if settings.collections_vendor_enable %}
+      <p class="grid-link__title grid-link__vendor">{{ product.vendor }}</p>
+    {% endif %}
+    <p class="grid-link__meta">
+      
+      {% capture price %}{{ product.price | money }}{% endcapture %}
+      {% if product.price_varies %}{{ 'products.general.from_html' | t: price: price }}{% else %}{{ price }}{% endif %}
+      {% if freebie %}
+     	 <s class="grid-link__freebie_price">{{ product.compare_at_price | money }}</s>
+      {% else %}
+        {% if on_sale %}
+        <s class="grid-link__sale_price">{{ product.compare_at_price | money }}</s>
+        {% endif %}
+      {% endif %}
+    </p>
+  </a>
+</div>

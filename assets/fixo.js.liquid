@@ -1,0 +1,30 @@
+function _AAFY() {
+  var contactUrl = null;
+  var referrer =  document.referrer;
+  var checkOutMatch = referrer.match(/(https:\/\/checkout.shopify.com\/([0-9]+)\/checkouts\/([^?]+))[?]?/);
+  if (checkOutMatch)
+  {
+   // console.log('coming from checkout, set fix');
+    var UU = checkOutMatch[1]+"?previous_step=contact_information&step=shipping_method";
+    if(sessionStorage)
+      sessionStorage.setItem("UU",UU);
+  }
+}
+
+function nextStep(e) {
+   var contactUrl = null;
+   if(sessionStorage)
+		contactUrl = sessionStorage.getItem("UU");
+  
+	if (contactUrl)
+	{
+	   // console.log('fix requested => go to SM');
+	   if(sessionStorage)
+		   sessionStorage.removeItem("UU");
+
+	   window.location.href = contactUrl;
+	   return false;
+	}
+      
+   return true;
+}

@@ -1,0 +1,32 @@
+{% if template contains 'product' %}
+  {% assign entity = product %}
+{% elsif template contains 'article' %}
+  {% assign entity = article %}
+{% endif %}
+
+{% if entity %}
+  <div id='beesocial'
+    data-domain='{{shop.permanent_domain}}'
+    data-product-id='{{entity.id}}'
+    data-product-title='{{entity.title}}'
+    data-product-image='{{entity.featured_image | product_img_url: 'grande'}}'
+    data-url='{{shop.domain}}{{entity.url}}'
+    data-fb-comment-num-post='10'
+    data-fb-comment-style='light'
+    data-disable-comment='0'
+    data-disable-like='0'
+    data-disable-fancy='1'
+    data-disable-plusone='1'
+    data-disable-pinterest='0'
+    data-disable-twitter='1'
+    data-twitter-text='Check this out!'
+    data-pro-wm-removal='1'
+    data-pro-notif-comments='1'
+    data-pro-fb-share='0'
+    platform='shopify'
+    uuid='7287fecf-5f2e-42cf-81bd-1f449558ee0e'
+    data-css-style='padding-top: 20px; clear: both'
+  >
+  </div>
+{% endif %}
+

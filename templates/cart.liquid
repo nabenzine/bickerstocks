@@ -1,0 +1,311 @@
+{% comment %}
+
+  This is your /cart template.
+  
+  Modifications by Eric Lequien / www.ffh-lab.com on 2016/02/29
+  GOAL#1: limitation to 9 free items in free order or 1 per $20 (see the ***ELN tags in code below)
+          => message on screen and checkout button disabled when conditions are not met.
+  GOAL#2: remove the Paypal button to prevent to bypass the auto-subscription during order process
+          => simply commented the concerned element
+
+  Modification by Raphael Rousseau / r4f.org on 2016/08/26
+  GOAL: ease the configuration of the freebies rules for non-techies
+
+  Modification by Franck Yvetot
+  GOAL: auto update cart on change
+
+
+{% endcomment %}
+{% assign max_giveaways = settings.freebies_max_giveaways  | plus:0 %}{% comment %} Maximum de freebies par commande {% endcomment %}
+{% assign min_per_freebie = settings.freebies_min_per_freebie  | plus:0 %}{% comment %} Seuil de commande par freebie (1 freebie autorisé par X facturés) {% endcomment %}
+{% assign min_per_freebie_currency = min_per_freebie  | times:100 | money_without_trailing_zeros %}
+
+{% if template == 'cart' %}
+          <nav class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+           <a href="/" title="Home">{{'general.breadcrumbs.home' | t}}</a>
+           <span aria-hidden="true">&raquo;</span>
+           <span>{{ page_title }}</span>
+          </nav>
+    
+         {% endif %}
+
+{% if cart.item_count > 0 %}
+
+  <!-- ***ELN_MOD_BEGIN -->
+  {% assign giveaways = 0 | plus: 0 %}
+  {% assign giveaways_glut = false %}
+  <!-- ELN_MOD_END -->
+  <form id="cart_form" action="/cart" method="post" novalidate class="cart">   
+
+    <div class="section-header">
+      <h1 class="section-header__title">{{ 'cart.general.title' | t }}</h1>
+    </div>
+   <div class="cart-main">
+    <div class="cart__row medium-down--hide cart__header-labels">
+      <div class="grid--full">
+        <div class="grid__item post-large--one-half hdr1">
+          <span class="h4">{{ ''}}</span>
+        </div>
+        <div class="grid__item post-large--one-half">
+          <div class="grid--full">
+            <div class="grid__item cart__col text-center hdr2">
+              <span class="h4">{{ 'cart.label.price' | t }}</span>
+            </div>
+            <div class="grid__item cart__col text-center hdr2">
+              <span class="h4">{{ 'cart.label.quantity' | t }}</span>
+            </div>
+            <div class="grid__item cart__col text-center hdr2">
+              <span class="h4">{{ 'cart.general.remove' | t }}</span>
+            </div>
+            <div class="grid__item cart__col text-center hdr2">
+              <span class="h4">{{ 'cart.label.total' | t }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% comment %}
+      Loop through products in the cart
+    {% endcomment %}
+    {% for item in cart.items %}
+      <div class="cart__row">
+        <div class="grid--full cart__row--table-large row-border">
+
+          <div class="grid__item post-large--one-half item-col">
+            <div class="grid">
+
+              <div class="grid__item one-third">
+                <a href="{{ item.url | within: collections.all }}" class="cart__image">
+
+                  {% comment %}
+                    More image size options at:
+                      - http://docs.shopify.com/themes/filters/product-img-url
+                  {% endcomment %}
+                  <img src="{{ item | img_url: 'medium' }}" alt="{{ item.title | escape }}">
+                </a>
+              </div>
+
+              <div class="grid__item two-thirds item-name">
+                <a href="{{ item.url }}" class="h5">
+                  {{ item.product.title }}
+                </a>
+                 <p>{{ item.vendor }}</p>
+                {% unless item.variant.title contains 'Default' %}
+                  <br>
+                  <small>{{ item.variant.title }}</small>
+                {% endunless %}
+                
+                {% comment %}
+                {% if settings.cart_vendor_enable %}
+                  <p>{{ item.vendor }}</p>
+                {% endif %}
+                {% endcomment %}
+                
+                {% comment %}
+                  Optional, loop through custom product line items if available
+
+                  For more info on line item properties, visit:
+                    - http://docs.shopify.com/support/your-store/products/how-do-I-collect-additional-information-on-the-product-page-Like-for-a-monogram-engraving-or-customization
+                {% endcomment %}
+                {% if item.properties.size > 0 %}
+                  {% for p in item.properties %}
+                    {% unless p.last == blank %}
+                      {{ p.first }}:
+
+                      {% comment %}
+                        Check if there was an uploaded file associated
+                      {% endcomment %}
+                      {% if p.last contains '/uploads/' %}
+                        <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                      {% else %}
+                        {{ p.last }}
+                      {% endif %}
+
+                      <br>
+                    {% endunless %}
+                  {% endfor %}
+                {% endif %}
+
+                
+              </div>
+
+            </div>
+          </div>
+
+          <div class="grid__item post-large--one-half">
+            <div class="grid--full cart__row--table-large">
+
+              <div class="grid__item cart__col text-center cart-border-left">
+                <span class="cart__mini-labels">{{ 'cart.label.price' | t }}</span>
+                <span class="h5">{{ item.price | money }}</span>
+              </div>
+
+              <div class="grid__item cart__col text-center cart-border-left">
+                <span class="cart__mini-labels">{{ 'cart.label.quantity' | t }}</span>
+
+                <!-- ***ELN_MOD_BEGIN 
+                WAS <input type="number" class="cart__quantity-selector" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0"> -->
+                <input type="number" class="cart__quantity-selector" onchange="modif();" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+                <!-- ELN_MOD_END -->
+              </div>
+              
+              <div class="grid__item cart__col text-center cart-border-left">
+              <span class="cart__mini-labels">{{ 'cart.general.remove' | t }}</span>
+               <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="cart__remove">
+                  <small>{{ 'X' }}</small>
+                </a>
+              </div>
+
+              <div class="grid__item cart__col text-center cart-border-left cart-total">
+                <span class="cart__mini-labels">{{ 'cart.label.total' | t }}</span>
+                <span class="h5">{{ item.line_price | money }}</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+     
+      <!-- ***ELN_MOD_BEGIN -->
+      {% if item.price == 0 %}
+        {% assign giveaways = giveaways | plus: item.quantity %}
+      {% endif %}      
+      <!-- ELN_MOD_END -->
+
+  {% endfor %}
+
+  </div>
+    
+    <div class="cart__row cart-btm">
+      <div class="grid">
+        {% comment %}
+          Optional, add a textarea for special notes
+            - Your theme settings can turn this on or off. Default is on.
+            - Make sure you have name="note" for the message to be submitted properly
+        {% endcomment %}
+        {% if settings.cart_notes_enable %}
+          {% assign noteSize = cart.note | size %}
+          <div class="grid__item post-large--five-twelfths">
+            <button type="button" class="text-link cart__note-add{% if noteSize > 0 %} is-hidden{% endif %}">
+              {{ 'cart.label.add_note' | t }}
+            </button>
+            <div class="cart__note{% if noteSize > 0 %} is-active{% endif %}">
+              <label for="CartSpecialInstructions">{{ 'cart.general.note' | t }}</label>
+              <textarea name="note" class="input-full" id="CartSpecialInstructions">{{ cart.note }}</textarea>
+            </div>
+          </div>
+        {% endif %}
+        
+        <div class="grid__item text-right{% if settings.cart_notes_enable %} post-large--seven-twelfths{% endif %}">
+          
+          <div class="cart-pay-option">
+            
+        <!-- FY -->
+            {% include 'payment-options' %}
+        <!-- /FY -->
+
+        <!--
+         <ul>
+              <li><img src="{{ 'ae.jpg' | asset_url }}" /></li>
+              <li><img src="{{ 'dis.jpg' | asset_url }}" /></li>
+              <li><img src="{{ 'master.jpg' | asset_url }}" /></li>
+              <li><img src="{{ 'paypal.jpg' | asset_url }}" /></li>
+              <li><img src="{{ 'visa.jpg' | asset_url }}" /></li>
+            </ul>
+		-->
+            
+        </div>
+          
+          <p class="sub-total">
+            <span class="cart__subtotal-title">{{ 'cart.general.subtotal' | t }}</span>
+            <span class="h5 cart__subtotal">{{ cart.total_price | money }}</span>
+          </p>
+		  <!-- ***ELN_MOD_BEGIN -->
+		  <style>
+			#err {color: #f00; font-weight: bold}
+			#sol {color: #f00; font-weight: normal}
+		  </style>
+		  {% if cart.total_price == 0 %}
+			{% if giveaways > max_giveaways %}
+			  {% assign giveaways_glut = true %}
+			  <h3 style='color: #ff0000'>{{ 'cart.freebies.alert_over' | t  | replace: '9', max_giveaways }}</h3>
+			{% endif %}
+		  {% else %}
+			{% assign total = cart.total_price | divided_by: 100 %}
+			{% assign giveaways_max = total | divided_by: min_per_freebie  | floor %}
+			{% if giveaways > giveaways_max %}
+			  {% assign giveaways_glut = true %}
+			  {% assign giveaways_over = giveaways | minus: giveaways_max %}
+			  {% assign giveaways_lack = giveaways | times: min_per_freebie  | minus: total %}   
+			  {% assign giveaways_over_label = 'item' %}
+			  {% if giveaways_over > 1 %}
+				{% assign giveaways_over_label = giveaways_over_label | append: 's' %}
+			  {% endif %}    
+			  <h3 id='err'>{{ 'cart.freebies.alert_over2' | t | replace: '20€', min_per_freebie_currency }}</h3>
+			  <h4 id='sol'>{{ 'cart.freebies.advice_over2' | t  }}</h4>
+			{% endif %}
+		  {% endif %}
+		  <!-- ELN_MOD_END -->
+          
+          {% comment %}<p><em>{{ 'cart.general.shipping_at_checkout' | t }}</em></p>{% endcomment %}
+          <!-- FY
+          <input type="submit" name="update" class="btn--secondary update-cart" value="{{ 'cart.general.update' | t }}">
+			/FY -->
+          
+		 <input type="button" value="{{'cart.general.continue_shopping' |t }}" class="btn--secondary update-cart" 
+   				onclick="window.location = '{{ cart.items.first.product.collections.first.url }}'" />
+          
+         <!-- ***ELN_MOD_BEGIN 
+		  WAS: <input type="submit" name="checkout" class="btn checkout-cart" value="{{ 'cart.general.checkout' | t }}"> -->
+          <input onclick="return insync(event);" type="submit" name="checkout"  id="checkout" class="btn checkout-cart"  value="{{ 'cart.general.checkout' | t }}" {% if giveaways_glut == true %}disabled{% endif %}>
+		  <!-- ELN_MOD_END -->
+
+
+         <!--
+            {% if additional_checkout_buttons %}
+              <div class="cart__additional_checkout">{{ content_for_additional_checkout_buttons }}</div>
+            {% endif %}
+		  -->
+          
+        </div>
+      </div>
+
+    </div>
+  
+  </form>
+
+{% else %}
+  {% comment %}
+    The cart is empty
+  {% endcomment %}
+  <h2>{{ 'cart.general.title' | t }}</h2>
+  <p>{{ 'cart.general.empty' | t }}</p>
+  <p>{{ 'cart.general.continue_browsing_html' | t }}</p>
+{% endif %}
+<!-- ***ELN_MOD_BEGIN -->
+<script type="text/javascript">
+  var uptd = true;
+  function modif(){
+    uptd = false;     
+    setTimeout(function() {
+       $('#cart_form').submit();
+       // resetShipping();                   
+	}, 1000);
+  }
+  
+  function insync(event){
+    if (uptd == false)
+      alert('{{ 'cart.freebies.alert_js' | t }}');
+
+      if(!nextStep(event))
+      {
+        event.preventDefault();
+        return false;
+      }
+    return uptd;
+  }      
+            
+</script>
+<!-- ELN_MOD_END -->

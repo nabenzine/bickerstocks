@@ -1,0 +1,58 @@
+{% if settings.home_section_1 != blank %}
+<section id="home_section_1" class="wrapper">
+    <div class="grid">
+        <div class="grid__item">
+	  		{% include settings.home_section_1 %}
+        </div>
+    </div>
+  	</div>
+</section>
+{% endif %}
+
+
+{% if settings.home_section_2 != blank %}
+<section id="home_section_2"  class="{{ settings.home_section_2_class | default:"wrapper" }}">
+    <div class="grid">
+        <div class="grid__item">
+  			{% include settings.home_section_2 %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+{% if settings.home_section_3 != blank %}
+<section id="home_section_3"  class="{{ settings.home_section_3_class | default:"wrapper" }}">
+    <div class="grid">
+        <div class="grid__item">
+  			{% include settings.home_section_3 %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if settings.home_section_4 != blank %}
+<section id="home_section_4"  class="{{ settings.home_section_4_class | default:"wrapper" }}">
+    <div class="grid">
+        <div class="grid__item">
+  			{% include settings.home_section_4 %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if settings.home_section_5 != blank %}
+<section id="home_section_5"  class="{{ settings.home_section_5_class | default:"wrapper" }}">
+    <div class="grid">
+        <div class="grid__item">
+		  {% include settings.home_section_5 %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+
+
+
+
