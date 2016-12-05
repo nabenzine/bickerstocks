@@ -358,27 +358,33 @@
       // Prevent a page reload when a link is pressed
       e.preventDefault();
 
-      // Supprimer la classe active et ajouter celle des(Avis)
-      $('ul.tabs').find('a').removeClass('active');
-      active = $('a[href="#tab-5"]').addClass('active');
-      // Cacher l'ancien contenu et afficher le nouveau (Avis)
-      content.hide();
-      content = $($('a[href="#tab-5"]').attr('href')).show();
+      // Si review product tab activé
+      {% if settings.enable_product_review_tab %}
+        // Supprimer la classe active et ajouter celle des(Avis)
+        $('ul.tabs').find('a').removeClass('active');
+        active = $('a[href="#tab-5"]').addClass('active');
+        // Cacher l'ancien contenu et afficher le nouveau (Avis)
+        content.hide();
+        content = $($('a[href="#tab-5"]').attr('href')).show();
 
-      var el = $('.my-tab');
-      var elOffset = el.offset().top;
-      var elHeight = el.height();
-      var windowHeight = $(window).height();
-      var offset;
 
-      if (elHeight < windowHeight) {
-        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
-      }
-      else {
-        offset = elOffset;
-      }
-      var speed = 700;
-      $('html, body').animate({scrollTop:offset}, speed);
+        var el = $('.my-tab');
+        var elOffset = el.offset().top;
+        var elHeight = el.height();
+        var windowHeight = $(window).height();
+        var offset;
+
+        if (elHeight < windowHeight) {
+          offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+        }
+        else {
+          offset = elOffset;
+        }
+        var speed = 700;
+        // Scrooler jusqu'au milieu de la page
+        $('html, body').animate({scrollTop:offset}, speed);
+      {% endif %}
+
     });
 
   });
