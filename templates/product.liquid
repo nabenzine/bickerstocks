@@ -100,7 +100,9 @@
                 <h3>{{ product.vendor }}</h3>
               {% endif %}{% endcomment %}
               <h1 itemprop="name">{{ product.title }}</h1>
-
+              <a href="#" id="showReview">
+                <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+              </a>
               <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
                 {% assign variant = product.selected_or_first_available_variant %}
 
@@ -153,7 +155,8 @@
       {% if shop.locale == "fr" %} 
                   <ul class="tabs">
                     <li><a href="#tab-1">{{ 'products.tabs.Details' |t }}</a></li>
-                  {% if settings.product_tab_2_fr != empty %}
+                    <li><a href="#tab-5">{{ 'products.tabs.Reviews' |t  }}</a></li>
+                    {% if settings.product_tab_2_fr != empty %}
                     <li><a href="#tab-2">{{ pages[settings.product_tab_2_fr].title }}</a></li>
                   {% endif %}            
 
@@ -167,7 +170,8 @@
       {% else %}
                   <ul class="tabs">
                     <li><a href="#tab-1">{{ 'products.tabs.Details' |t }}</a></li>
-                  {% if settings.product_tab_2 != empty %}
+                    <li><a href="#tab-5">{{ 'products.tabs.Reviews' |t  }}</a></li>
+                    {% if settings.product_tab_2 != empty %}
                     <li><a href="#tab-2">{{ pages[settings.product_tab_2].title }}</a></li>
                   {% endif %}                        
                   {% if settings.product_tab_3 != empty %}
@@ -188,7 +192,9 @@
                   {% endif %}            
 
                   </div>
-
+                  <div id="tab-5">
+                    <div id="shopify-product-reviews" data-id="{{product.id}}">{{product.metafields.spr.reviews }}</div>
+                  </div>
                   {% if settings.product_tab_2_fr != empty %}
                   <div id="tab-2">
                      {{ pages[settings.product_tab_2_fr].content }} 
@@ -213,6 +219,9 @@
                      {{ pages[settings.product_tab_1].content }}
                   {% endif %}            
 
+                  </div>
+                  <div id="tab-5">
+                    <div id="shopify-product-reviews" data-id="{{product.id}}">{{product.metafields.spr.reviews }}</div>
                   </div>
                   {% if settings.product_tab_2 != empty %}
                   <div id="tab-2">
@@ -322,8 +331,9 @@
 
 <script>
   $(document).ready(function() {
+    var active, content, links;
     $('ul.tabs').each(function(){
-      var active, content, links = $(this).find('a');
+      active, content, links = $(this).find('a');
       active = links.first().addClass('active');
       content = $(active.attr('href'));
       links.not(':first').each(function () {
@@ -339,6 +349,35 @@
         return false;
       });
     });
+
+    // Afficher les commentaires
+    $('#showReview').click(function(e) {
+      // Prevent a page reload when a link is pressed
+      e.preventDefault();
+
+      // Supprimer la classe active et ajouter celle des(Avis)
+      $('ul.tabs').find('a').removeClass('active');
+      active = $('a[href="#tab-5"]').addClass('active');
+      // Cacher l'ancien contenu et afficher le nouveau (Avis)
+      content.hide();
+      content = $($('a[href="#tab-5"]').attr('href')).show();
+
+      var el = $('.my-tab');
+      var elOffset = el.offset().top;
+      var elHeight = el.height();
+      var windowHeight = $(window).height();
+      var offset;
+
+      if (elHeight < windowHeight) {
+        offset = elOffset - ((windowHeight / 2) - (elHeight / 2));
+      }
+      else {
+        offset = elOffset;
+      }
+      var speed = 700;
+      $('html, body').animate({scrollTop:offset}, speed);
+    });
+
   });
 </script>
 
