@@ -2814,6 +2814,18 @@ input.btn--secondary.update-cart:hover{background-color:#000!important; color:#f
 	.sca-qv-image{clear:none!important}
 }
 
+/* FY */
+@include at-query($max, $medium) {
+  .site-header__logo {
+      margin: -20px 60px 0 70px;
+  }
+    
+  .site-header__logo img {
+    margin-bottom: 10px;
+  }  
+}
+/* /FY */
+
 @media (min-width:480px) and (max-width:768px)
 {
 	.main-content,.wrapper{padding:0 10px}
@@ -2822,8 +2834,8 @@ input.btn--secondary.update-cart:hover{background-color:#000!important; color:#f
   	button#hide{top:7px}
   	.header-message{display:none}
   	.site-header .post-large--one-third { width: 26.8%; margin: 0 auto; display: block; float: none;}
-  	.site-header__logo{margin:-40px 0 0 0;}
-  	.site-header { margin: 0 0 20px 0;}
+  	.site-header__logo{margin:-15px 0 0 0;}
+  	.site-header { margin: 0 0 20px 0; z-index:0;}
   
   	.mobile-nav-trigger{margin: 25px 0 0 0!important;text-transform: uppercase;}
  	.mobile-cart-page-link{margin-top:25px!important;}

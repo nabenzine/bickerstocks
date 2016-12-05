@@ -98,6 +98,8 @@
         {% endif %}
       {% endif %}
     </p>
-    <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+    {% if product.metafields.spr.reviews != empty %}
+        <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+    {% endif %}
   </a>
 </div>

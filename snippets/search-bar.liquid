@@ -18,7 +18,7 @@
     {% comment %}<input type="hidden" name="type" value="product">{% endcomment %}
     <input type="search" name="q" value="{{ search.terms | escape }}" aria-label="{{ 'general.search.placeholder' | t }}" class="header-bar__search-input" placeholder="{{ 'general.search.placeholder' | t }}">
     
-    <input style="display:none" type="submit" class="icon icon-search" value="&nbsp;">
+    <input style="position:absolute;top:-1000px;" type="submit" class="icon icon-search" value="&nbsp;">
     <button type="submit" class="btn icon-fallback-text header-bar__search-submit" onclick="$('#search_x').submit()">
       <span class="icon icon-search" aria-hidden="true"></span>
       <span class="fallback-text">{{ 'general.search.submit' | t }}</span>
@@ -28,7 +28,7 @@
   <form action="/search" method="get" class="input-group search-bar" role="search" id="search_x">
     {% comment %}<input type="hidden" name="type" value="product">{% endcomment %}
     <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}" placeholder="{{ 'general.search.placeholder' | t }}">
-    <input style="display:none" type="submit" value="Search" />
+    <input style="position:absolute;top:-1000px;" type="submit" value="Search" />
     <span class="input-group-btn">
       <button type="submit" class="btn icon-fallback-text"  onclick="$('#search_x').submit()">
         <span class="icon icon-search" aria-hidden="true"></span>
