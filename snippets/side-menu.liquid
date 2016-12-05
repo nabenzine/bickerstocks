@@ -1,0 +1,16 @@
+<aside class="grid__item one-sixth small--hide medium--hide">
+    <h3>{{ 'collections.general.title' | t }}</h3>
+    <ul>
+        {% for collect in collections %}
+            {% unless collect.handle == 'frontpage' or collect.all_products_count == 0 %}
+            {% assign featured = collect.handle %}
+            <li>
+                <a style="{% if collect.handle == collection.handle %} color: #03a9f4;font-weight: 400;font-size: 16.5px; {% endif %}"
+                   href="{{ collections[featured].url }}" >
+                    {{ collect.title }}
+                </a>
+            </li>
+            {% endunless %}
+        {% endfor %}
+    </ul>
+</aside>

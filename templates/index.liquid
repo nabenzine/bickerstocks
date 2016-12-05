@@ -23,7 +23,11 @@
 
 {% if settings.home_section_3 != blank %}
 <section id="home_section_3"  class="{{ settings.home_section_3_class | default:"wrapper" }}">
-    <div class="grid">
+    {% if settings.enable_side_menu %}
+        {% include 'side-menu' %}
+    {% endif %}
+
+    <div {% if settings.enable_side_menu %} class="grid grid__item eight-tenths medium--one-whole" {% else %} class="grid" {%endif %}>
         <div class="grid__item">
   			{% include settings.home_section_3 %}
         </div>
