@@ -103,11 +103,9 @@
                 <h3>{{ product.vendor }}</h3>
               {% endif %}{% endcomment %}
               <h1 itemprop="name">{{ product.title }}</h1>
-              {% if product.metafields.spr.reviews != empty %}
-                <a href="#" id="showReview">
-                  <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
-                </a>
-              {% endif %}
+              <a href="#" id="showReview">
+                <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+              </a>
               <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
                 {% assign variant = product.selected_or_first_available_variant %}
 
@@ -160,7 +158,7 @@
       {% if shop.locale == "fr" %} 
                   <ul class="tabs">
                     <li><a href="#tab-1">{{ 'products.tabs.Details' |t }}</a></li>
-                    {% if product.metafields.spr.reviews != empty and settings.enable_product_review_tab %}
+                    {% if settings.enable_product_review_tab %}
                       <li><a href="#tab-5">{{ 'products.tabs.Reviews' |t  }}</a></li>
                     {% endif %}
                     {% if settings.product_tab_2_fr != empty %}
@@ -177,7 +175,7 @@
       {% else %}
                   <ul class="tabs">
                     <li><a href="#tab-1">{{ 'products.tabs.Details' |t }}</a></li>
-                    {% if product.metafields.spr.reviews != empty and settings.enable_product_review_tab %}
+                    {% if settings.enable_product_review_tab %}
                       <li><a href="#tab-5">{{ 'products.tabs.Reviews' |t  }}</a></li>
                     {% endif %}
                     {% if settings.product_tab_2 != empty %}
@@ -201,7 +199,7 @@
                   {% endif %}            
 
                   </div>
-                  {% if product.metafields.spr.reviews != empty and settings.enable_product_review_tab %}
+                  {% if settings.enable_product_review_tab %}
                     <div id="tab-5">
                       <div id="shopify-product-reviews" data-id="{{product.id}}">{{product.metafields.spr.reviews }}</div>
                     </div>
@@ -231,7 +229,7 @@
                   {% endif %}            
 
                   </div>
-                  {% if product.metafields.spr.reviews != empty and settings.enable_product_review_tab %}
+                  {% if settings.enable_product_review_tab %}
                     <div id="tab-5">
                       <div id="shopify-product-reviews" data-id="{{product.id}}">{{product.metafields.spr.reviews }}</div>
                     </div>
@@ -377,7 +375,7 @@
         content.hide();
         content = $($('a[href="#tab-5"]').attr('href')).show();
 
-
+        // Calcul des mesure de la fenêtre
         var el = $('.my-tab');
         var elOffset = el.offset().top;
         var elHeight = el.height();
