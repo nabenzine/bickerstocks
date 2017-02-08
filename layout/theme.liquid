@@ -206,7 +206,7 @@
       {% if settings.enable_side_menu %}
           {% include 'side-menu' %}
       {% endif %}
-      <div {% if settings.enable_side_menu %} class="grid grid__item eight-tenths medium--one-whole" {% else %} class="grid" {%endif %}>
+      <div {% if settings.enable_side_menu %} class="grid grid__item eight-tenths small--one-whole medium--one-whole" {% else %} class="grid" {%endif %}>
           <div class="grid__item">
             {{ content_for_layout }}
           </div>
