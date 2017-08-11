@@ -1,0 +1,69 @@
+<link rel="stylesheet" href="{{ 'sp-reveal.css' | asset_url }}">
+{{ 'sp-reveal.js' | asset_url | script_tag }}
+
+<div class="sp-rvl">
+  {% assign sp_rvl_style = 'sp-reveal-' | append: page.metafields.sp-reveal.style %}
+  <div class="sp-reveal-page {{ sp_rvl_style }}">
+    <div class="sp-reveal">
+      <div class="row">
+        <div class="small-12 medium-6 medium-centered columns">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-12 medium-6 medium-centered columns text-center">
+          <div class="sp-reveal__container"
+            style="background-image: url({{ page.metafields.sp-reveal.page_background_image }})">
+            <div class="sp-reveal__coupon">
+              {% include sp_rvl_style %}
+            </div>
+
+            <br/>
+
+            <div id="sp-reveal-stc" style="display: none">
+              <p>
+                <input type="text" disabled id="sp-reveal-dc"
+                value="{{ page.metafields.sp-reveal.discount_code }}"
+                style="width: 50%; margin: 0 auto;"
+                >
+              </p>
+
+              <p>
+                <a class="secondary button sp-reveal-send-to-clipboard" href="#">
+                  Copy Discount Code to Clipboard
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-12 columns text-center">
+          <div class="sp-reveal__terms-of-sale">
+            <em>{{ page.metafields.sp-reveal.terms_of_sale }}</em>
+          </div>
+
+          <div class="sp-reveal__copyright">Powered by Skinnyprice</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      $(function () {
+        var sendToClipboard = function (text) {
+          var placeholder = $("<input>");
+          $("body").append(placeholder);
+          placeholder.val(text).select();
+          document.execCommand("copy");
+          placeholder.remove();
+        };
+
+        $(".sp-reveal-send-to-clipboard").click(function (event) {
+          event.preventDefault();
+          sendToClipboard("{{ page.metafields.sp-reveal.discount_code }}");
+        });
+      });
+    </script>
+  </div>
+</div>

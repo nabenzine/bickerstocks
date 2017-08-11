@@ -193,12 +193,12 @@
  {% if template == 'index' %} 
   
   <main class="main-content" role="main">        
-	{{ content_for_layout }}{% include 'vnavs' %}
+	{{ content_for_layout }}
   </main>
  
   {% elsif template == 'product' %}
   
-    {{ content_for_layout }}{% include 'vnavs' %}  
+    {{ content_for_layout }}  
   
   {% else %}
   
@@ -208,7 +208,7 @@
       {% endif %}
       <div {% if settings.enable_side_menu %} class="grid grid__item eight-tenths small--one-whole medium--one-whole" {% else %} class="grid" {%endif %}>
           <div class="grid__item">
-            {{ content_for_layout }}{% include 'vnavs' %}
+            {{ content_for_layout }}
           </div>
       </div>
   </main>

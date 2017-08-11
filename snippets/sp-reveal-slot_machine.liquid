@@ -1,0 +1,88 @@
+<div class="row small-collapse">
+  <div class="slotMachine-wrap"
+    style="border-color: {{ page.metafields.sp-reveal.slot_machine_accent_color }};
+    color: {{ page.metafields.sp-reveal.slot_machine_accent_color }}">
+
+    <div id="machine1" class="slotMachine">
+      <div class="slot slot0">0</div>
+      <div class="slot slot1">1</div>
+      <div class="slot slot2">2</div>
+      <div class="slot slot3">3</div>
+      <div class="slot slot4">4</div>
+      <div class="slot slot5">5</div>
+      <div class="slot slot6">6</div>
+      <div class="slot slot7">7</div>
+      <div class="slot slot8">8</div>
+      <div class="slot slot9">9</div>
+    </div>
+
+    <div id="machine2" class="slotMachine">
+      <div class="slot slot0">0</div>
+      <div class="slot slot1">1</div>
+      <div class="slot slot2">2</div>
+      <div class="slot slot3">3</div>
+      <div class="slot slot4">4</div>
+      <div class="slot slot5">5</div>
+      <div class="slot slot6">6</div>
+      <div class="slot slot7">7</div>
+      <div class="slot slot8">8</div>
+      <div class="slot slot9">9</div>
+    </div>
+
+    <div id="machine3" class="slotMachine">
+      <div class="slot slot0">
+        <div class="slot-percent-wrap">
+          <div class="slot-percent">%</div>
+          <div class="slot-off">off</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="#" class="sp-rvl-spin"
+  style="background-color: {{ page.metafields.sp-reveal.slot_machine_accent_color }};">Spin</a>
+
+
+
+<script type="text/javascript">
+  jQuery(function ($) {
+
+    var spinDuration = 500;
+    var delayBeforeNext = 500;
+    var numCycles = 5;
+    var machineParams = {
+      active: 0,
+      delay: spinDuration,
+      stopHidden: true,
+    };
+
+    var machine1 = $("#machine1").slotMachine(machineParams);
+    var machine2 = $("#machine2").slotMachine(machineParams);
+    var machine3 = $("#machine3").slotMachine({
+      active: 0,
+      delay: spinDuration,
+      stopHidden: true,
+      complete: function () {
+        $("#sp-reveal-stc").show();
+      }
+    });
+
+    var startSpin = function (result1, result2, result3) {
+      machine1.setRandomize(result1);
+      machine2.setRandomize(result2);
+      machine3.setRandomize(result3);
+      machine1.shuffle(numCycles);
+      machine2.shuffle(numCycles * 1.5);
+      machine3.shuffle(numCycles * 1.6);
+    }
+
+    $(".sp-rvl-spin").click(function(event){
+      event.preventDefault();
+      var amount = "{{ page.metafields.sp-reveal.discount_amount }}";
+      var firstDigit = parseInt(amount.slice(-1));
+      var secondDigit = (parseInt(amount) - firstDigit) / 10;
+      startSpin(secondDigit, firstDigit, 1);
+    })
+  });
+</script>

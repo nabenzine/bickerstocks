@@ -1,0 +1,19 @@
+<div id="sp-rvl-scratch"></div>
+
+<script type="text/javascript">
+  var callback = function () {
+    el = document.getElementById("sp-reveal-stc");
+    el.style.display = "inline";
+  };
+  jQuery(function ($) {
+    createScratchCard({
+      "container": document.getElementById("sp-rvl-scratch"),
+      "background": "{{ page.metafields.sp-reveal.scratch_background_image }}",
+      "foreground": "{{ page.metafields.sp-reveal.scratch_foreground_image }}",
+      "percent": 60,
+      "coin": "{{ 'sp-rvl-scratch-coin.png' | asset_url }}",
+      "thickness": 24,
+      "callback": "callback"
+    });
+  });
+</script>
